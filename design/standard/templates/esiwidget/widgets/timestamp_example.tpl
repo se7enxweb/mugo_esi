@@ -1,0 +1,1 @@
+Current timestamp: {$data.timestamp}
