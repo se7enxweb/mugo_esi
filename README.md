@@ -55,3 +55,25 @@ Create extension/myextension/design/standard/templates/esiwidget/widgets/usernam
 Use your new widget! In the relevant template, call the widget:
 
     {mugo_esi_widget( 'username' )}
+
+You can pass parameters to the esi widget and they should be passed as GET parameters since we support multiple, here is one example on how to pass the param 'tagID' to the widget:
+
+    {mugo_esi_widget( 'paramtest', hash( 'tagID', $tagID ) )}
+
+And you can read the parameter using the eZHTTPTool class:
+
+    <?php
+    class MyESIWidgets
+    {
+        public static function paramtestAction()
+        {
+            $tagID = eZHTTPTool::hasGetVariable('tagID') ? eZHTTPTool::getVariable('tagID') : false;
+            return array('tag_id' => $tagID);
+        }
+    }
+
+You must include the following code in your pagelayout in order to support ESI widgets in full view templates. This is to ensure that eZ Publish will pass the HTTP header informing Varnish that there are ESI tags in the response.:
+
+{if is_set( $module_result.content_info.persistent_variable.surrogate )}
+    {set_header_variable( 'Surrogate-Control', 'abc=ESI/1.0' )}
+{/if}
