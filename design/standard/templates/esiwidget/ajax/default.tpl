@@ -6,7 +6,13 @@
 <script type="text/javascript">
     jQuery( document ).ready( function()
     {ldelim}
-        jQuery.get( {concat( 'esiwidget/view/(widget)/', $widget_name )|ezurl()}, function( data )
+        jQuery.get( {concat( 'esiwidget/view/(widget)/', $widget_name)|ezurl()},
+                    {ldelim}
+                        {foreach $widget_params as $index => $param}
+                            {$index}: "{$param}"{delimiter},{/delimiter}
+                        {/foreach}
+                    {rdelim}
+        ).done(function( data )
         {ldelim}
             if ( data != '' )
             {ldelim}
