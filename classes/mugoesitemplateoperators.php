@@ -13,8 +13,8 @@ class MugoESITemplateOperators
     function operatorList()
     {
         return array(
-               'mugo_esi_widget'
-               , 'set_header_variable'
+               'mugo_esi_widget',
+               'set_header_variable'
         );
     }
 
@@ -26,12 +26,17 @@ class MugoESITemplateOperators
     function namedParameterList()
     {
         return array( 'mugo_esi_widget' => array( 
-                            'widget_name'  => array( 'type' => 'string',  'required' => true )
-                            , 'widget_params'  => array( 'type' => 'array',  'required' => false )
-                        )
-                      , 'set_header_variable' => array( 
-                            'name'  => array( 'type' => 'string',  'required' => true )
-                            , 'value'  => array( 'type' => 'string',  'required' => true )
+                            'widget_name'  => array( 'type' => 'string',  'required' => true ),
+                            'widget_params'  =>
+                                [
+                                    'type' => 'array',
+                                    'required' => false,
+                                    'default' => [],
+                                ]
+                        ),
+                      'set_header_variable' => array(
+                            'name'  => array( 'type' => 'string',  'required' => true ),
+                            'value'  => array( 'type' => 'string',  'required' => true )
                         )
             );
     }
@@ -52,18 +57,9 @@ class MugoESITemplateOperators
                     ezjscPackerTemplateFunctions::setPersistentArray( 'surrogate', true, $tpl, false, false, false, true );
                     $widgetURL = 'esiwidget/view/(widget)/' . $widgetName;
                     eZURI::transformURI( $widgetURL );
-                    if( isset( $namedParameters['widget_params'] ) )
+                    if( !empty( $namedParameters[ 'widget_params' ] ) )
                     {
-                        $widgetURL .= '?';
-                        $last = array_pop( array_keys( $namedParameters['widget_params'] ) );
-                        foreach( $namedParameters['widget_params'] as $index => $param )
-                        {
-                            $widgetURL .= urlencode( $index ) . '=' . urlencode( $param );
-                            if( $index != $last )
-                            {
-                                $widgetURL .= '&';
-                            }
-                        }
+                        $widgetURL .= '?' . http_build_query( $namedParameters[ 'widget_params' ] );
                     }
                     
                     $operatorValue = '<esi:include src="' . $widgetURL . '" />';
@@ -87,5 +83,3 @@ class MugoESITemplateOperators
         }
     }
 }
-
-?>
